@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Mouline ma grande, mouline</title>
+</head>
+<body>
+    <textarea id="content">
+
+    </textarea>
+    <button id="send">Mouliner</button>
+    <p id="result"></p>
+
+    <img src="/img.png" alt="jfanne" id="jfanne">
+
+    <script src="https://unpkg.com/ansi_up@5.1.0/ansi_up.js" defer></script>
+    <script>
+        document.getElementById('send').addEventListener('click', async () => {
+            const content = document.getElementById('content').value;
+            document.getElementById('jfanne').style.display = 'block';
+            document.getElementById('result').innerHTML = "En cours de moulinage...";
+
+            const response = await fetch('/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({data: content})
+            });
+
+            const ansi = new AnsiUp();
+
+                document.getElementById('result').innerHTML = "$ " +
+                ansi.ansi_to_html(await response.text());
+            window.scrollTo(0, document.body.scrollHeight);
+            document.getElementById('jfanne').style.display = 'none';
+        });
+    </script>
+</body>
+
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background-color: #1e1e1e;
+    }
+    #result {
+        display: flex;
+        flex-direction: column;
+        color: white;
+    }
+    #content {
+        width: 80vw;
+        height: 50vh;
+        background-color: #252526;
+        color: #d4d4d4;
+        border: 1px solid white;
+        padding: 0.5rem;
+        font-family: monospace;
+        font-size: 1rem;
+        resize: vertical;
+    }
+
+    img {
+        position: fixed;
+        bottom: 3rem;
+        right: 3rem;
+        animation: turn 1s linear infinite;
+        display: none;
+    }
+
+    @keyframes turn {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+</html>
